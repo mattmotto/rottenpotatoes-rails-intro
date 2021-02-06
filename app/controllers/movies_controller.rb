@@ -7,9 +7,32 @@ class MoviesController < ApplicationController
   end
 
   def index
-    @movies = Movie.all
-    @all_ratings = Movie.all_ratings
+    puts("here")
     @ratings_to_show = ratings_to_show
+    order_options = [:title, :release_date]
+    @movieCSS = ""
+    @releaseCSS = ""
+    @movies
+    if params[:sort_by]
+      @sort_by = order_options[params[:sort_by].to_i]
+      @movies = Movie.with_ratings(@ratings_to_show).order(@sort_by)
+    else
+      @movies = Movie.with_ratings(@ratings_to_show)
+    end
+    @all_ratings = Movie.all_ratings
+    
+    if @sort_by == :title
+      @movieCSS = "bg-warning"
+      @releaseCSS = ""
+    elsif @sort_by == :release_date
+      @movieCSS = ""
+      @releaseCSS = "bg-warning"
+    end
+    
+    @ratings_hash = Hash.new
+    @ratings_to_show.each do |r|
+      @ratings_hash[r] = 1
+    end
   end
 
   def new
