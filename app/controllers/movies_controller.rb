@@ -8,6 +8,8 @@ class MoviesController < ApplicationController
 
   def index
     @movies = Movie.all
+    @all_ratings = Movie.all_ratings
+    @ratings_to_show = ratings_to_show
   end
 
   def new
@@ -36,6 +38,14 @@ class MoviesController < ApplicationController
     @movie.destroy
     flash[:notice] = "Movie '#{@movie.title}' deleted."
     redirect_to movies_path
+  end
+  
+  def ratings_to_show
+    ans = params[:ratings]
+    if ans
+      return ans.keys
+    end
+    return []
   end
 
   private
