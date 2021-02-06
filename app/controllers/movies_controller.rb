@@ -7,12 +7,39 @@ class MoviesController < ApplicationController
   end
 
   def index
-    puts("here")
-    @ratings_to_show = ratings_to_show
+    @ratings_to_show
     order_options = [:title, :release_date]
     @movieCSS = ""
     @releaseCSS = ""
     @movies
+    @sort_by
+    @ratings_hash = Hash.new
+    
+    puts "params = "
+    puts params
+    
+    puts session.key? :sort_by
+    if session.key? :sort_by
+      puts session[:sort_by]
+    end
+    
+    puts session.key? :ratings
+    if session.key? :ratings
+      puts session[:ratings]
+    end
+    
+    if not params.key?(:sort_by) and not params.key?(:ratings)
+      puts "new"
+      params[:sort_by] = session[:sort_by]
+      params[:ratings] = session[:ratings]
+    end
+    
+    if params[:ratings]
+      @ratings_to_show = params[:ratings].keys
+    else
+      @ratings_to_show = []
+    end
+    
     if params[:sort_by]
       @sort_by = order_options[params[:sort_by].to_i]
       @movies = Movie.with_ratings(@ratings_to_show).order(@sort_by)
@@ -29,10 +56,12 @@ class MoviesController < ApplicationController
       @releaseCSS = "bg-warning"
     end
     
-    @ratings_hash = Hash.new
     @ratings_to_show.each do |r|
       @ratings_hash[r] = 1
     end
+    
+    session[:sort_by] = @sort_by
+    session[:ratings_hash] = @ratings_hash
   end
 
   def new
