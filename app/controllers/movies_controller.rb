@@ -30,14 +30,19 @@ class MoviesController < ApplicationController
     
     if not params.key?(:sort_by) and not params.key?(:ratings)
       puts "new"
-      params[:sort_by] = session[:sort_by]
-      params[:ratings] = session[:ratings]
+      if session.key?(:sort_by) and session.key?(:ratings)
+        redirect_to(movies_path(session[:sort_by], [:ratings]) )
+      elsif session.key?(:sort_by)
+        redirect_to(movies_path(session[:sort_by]))
+      elsif session.key?(:ratings)
+        redirect_to(movies_path([:ratings]))
+      end
     end
     
     if params[:ratings]
       @ratings_to_show = params[:ratings].keys
     else
-      @ratings_to_show = []
+      @ratings_to_show = Movie.all_ratings
     end
     
     if params[:sort_by]
