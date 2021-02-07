@@ -56,11 +56,11 @@ class MoviesController < ApplicationController
     @all_ratings = Movie.all_ratings
     
     if @sort_by == :title
-      @movieCSS = "bg-warning"
+      @movieCSS = "hilite bg-warning"
       @releaseCSS = ""
     elsif @sort_by == :release_date
       @movieCSS = ""
-      @releaseCSS = "bg-warning"
+      @releaseCSS = "hilite bg-warning"
     end
     
     puts session[:sort_by]
