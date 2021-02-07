@@ -28,26 +28,28 @@ class MoviesController < ApplicationController
       puts session[:ratings]
     end
     
-    if not params.key?(:sort_by) and not params.key?(:ratings)
-      puts "new"
-      if session.key?(:sort_by) and session.key?(:ratings)
-        redirect_to(movies_path(session[:sort_by], [:ratings]) )
-      elsif session.key?(:sort_by)
-        redirect_to(movies_path(session[:sort_by]))
-      elsif session.key?(:ratings)
-        redirect_to(movies_path([:ratings]))
-      end
+    if not params[:ratings] and not params[:sort_by]
+      puts "fuck"
+      redirect_to(movies_path(sort_by: session[:sort_by], ratings: session[:ratings]) )
     end
     
     if params[:ratings]
       @ratings_to_show = params[:ratings].keys
+      @ratings_to_show.each do |r|
+        @ratings_hash[r] = 1
+      end
+      session[:ratings] = @ratings_hash
     else
       @ratings_to_show = Movie.all_ratings
+      @ratings_to_show.each do |r|
+        @ratings_hash[r] = 1
+      end
     end
     
     if params[:sort_by]
       @sort_by = order_options[params[:sort_by].to_i]
       @movies = Movie.with_ratings(@ratings_to_show).order(@sort_by)
+      session[:sort_by] = params[:sort_by]
     else
       @movies = Movie.with_ratings(@ratings_to_show)
     end
@@ -61,12 +63,8 @@ class MoviesController < ApplicationController
       @releaseCSS = "bg-warning"
     end
     
-    @ratings_to_show.each do |r|
-      @ratings_hash[r] = 1
-    end
-    
-    session[:sort_by] = @sort_by
-    session[:ratings_hash] = @ratings_hash
+    puts session[:sort_by]
+    puts session[:ratings]
   end
 
   def new
